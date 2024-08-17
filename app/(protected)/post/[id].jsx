@@ -6,7 +6,7 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Story from "../../../components/Story";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -18,9 +18,30 @@ import { LinearGradient } from "expo-linear-gradient";
 import Input from "../../../components/Input";
 
 const PostDetails = () => {
-  const { post } = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
+  const [post, setPost] = useState({});
+  // console.log(id);
 
-  const { id, image, isLiked } = JSON.parse(post);
+  const fetchPost = async () => {
+    const res = await fetch(`http://192.168.100.6:3000/posts/${id}`);
+    const data = await res.json();
+    // console.log(data);
+
+    if (data) {
+      setPost(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchPost();
+  }, []);
+
+  // console.log(post);
+
+  // const parsedPost = JSON.parse(post);
+  // console.log(parsedPost.imageurl);
+
+  const isLiked = false;
 
   //   console.log(id);
   //   console.log(image);
@@ -62,192 +83,195 @@ const PostDetails = () => {
   ];
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#181a1c",
-      }}
-    >
+    post && (
       <View
         style={{
-          //   paddingTop: 20,
-          //   paddingHorizontal: 24,
-          marginBottom: 100,
+          flex: 1,
+          backgroundColor: "#181a1c",
         }}
       >
-        {/* Comment */}
-        <FlatList
-          ListHeaderComponent={() => (
-            <View>
-              <View style={{ paddingTop: 20 }}>
-                <View
-                  style={{
-                    borderBottomWidth: 1,
-                    paddingBottom: 25,
-                    borderBottomColor: "#323436",
-                  }}
-                >
+        <View
+          style={{
+            //   paddingTop: 20,
+            //   paddingHorizontal: 24,
+            marginBottom: 100,
+          }}
+        >
+          {/* Comment */}
+          <FlatList
+            ListHeaderComponent={() => (
+              <View>
+                <View style={{ paddingTop: 20 }}>
                   <View
                     style={{
-                      paddingHorizontal: 24,
-                      gap: 15,
+                      borderBottomWidth: 1,
+                      paddingBottom: 25,
+                      borderBottomColor: "#323436",
                     }}
                   >
                     <View
                       style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        paddingHorizontal: 24,
+                        gap: 15,
                       }}
                     >
                       <View
                         style={{
                           flexDirection: "row",
-                          gap: 10,
+                          justifyContent: "space-between",
                           alignItems: "center",
                         }}
                       >
                         <View
                           style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: 32,
+                            flexDirection: "row",
+                            gap: 10,
+                            alignItems: "center",
                           }}
                         >
-                          <Image
-                            source={require("../../../assets/images/Profile Photo.png")}
+                          <View
                             style={{
+                              width: 32,
+                              height: 32,
                               borderRadius: 32,
-                              width: "100%",
-                              height: "100%",
-                            }}
-                          />
-                        </View>
-                        <View style={{}}>
-                          <Text
-                            style={{
-                              fontWeight: "bold",
-                              fontSize: 14,
-                              color: "#ECEBED",
                             }}
                           >
-                            Jacob Washington
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: "#727477",
-                            }}
-                          >
-                            20m ago
-                          </Text>
+                            <Image
+                              source={require("../../../assets/images/Profile Photo.png")}
+                              style={{
+                                borderRadius: 32,
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            />
+                          </View>
+                          <View style={{}}>
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: 14,
+                                color: "#ECEBED",
+                              }}
+                            >
+                              {post.username}
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 12,
+                                color: "#727477",
+                              }}
+                            >
+                              {post.timestamp}
+                            </Text>
+                          </View>
                         </View>
+                        <Image
+                          source={require("../../../assets/images/Dots Vertical.png")}
+                        />
                       </View>
-                      <Image
-                        source={require("../../../assets/images/Dots Vertical.png")}
-                      />
-                    </View>
 
-                    <View
-                      style={{
-                        gap: 10,
-                      }}
-                    >
-                      {image && (
-                        <View
-                          style={{
-                            width: 327,
-                            height: 200,
-                          }}
-                        >
-                          <Image
-                            source={require("../../../assets/images/Rectangle 5.png")}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              resizeMode: "contain",
-                            }}
-                          />
-                        </View>
-                      )}
-
-                      <Text
-                        style={{
-                          color: "#ECEBED",
-                          fontSize: 16,
-                          width: "90%",
-                        }}
-                      >
-                        “If you think you are too small to make a difference,
-                        try sleeping with a mosquito.” ~ Dalai Lama
-                      </Text>
-                    </View>
-
-                    <View style={{ flexDirection: "row", gap: 30 }}>
                       <View
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
                           gap: 10,
                         }}
                       >
-                        {isLiked === true ? (
-                          <AntDesign name="like1" size={24} color="#f62e8e" />
-                        ) : (
-                          <AntDesign name="like2" size={24} color="white" />
+                        {post.imageurl && (
+                          <View
+                            style={{
+                              width: 327,
+                              height: 200,
+                            }}
+                          >
+                            <Image
+                              source={{ uri: post.imageurl }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                resizeMode: "stretch",
+                                borderRadius: 10,
+                              }}
+                            />
+                          </View>
                         )}
 
-                        <Text style={{ color: "white" }}>2,245</Text>
+                        <Text
+                          style={{
+                            color: "#ECEBED",
+                            fontSize: 16,
+                            width: "90%",
+                          }}
+                        >
+                          {post.caption}
+                        </Text>
                       </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 10,
-                        }}
-                      >
-                        <FontAwesome5
-                          name="comment-dots"
-                          size={24}
-                          color="white"
-                        />
-                        <Text style={{ color: "white" }}>45</Text>
+
+                      <View style={{ flexDirection: "row", gap: 30 }}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          {isLiked === true ? (
+                            <AntDesign name="like1" size={24} color="#f62e8e" />
+                          ) : (
+                            <AntDesign name="like2" size={24} color="white" />
+                          )}
+
+                          <Text style={{ color: "white" }}>{post.likes}</Text>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <FontAwesome5
+                            name="comment-dots"
+                            size={24}
+                            color="white"
+                          />
+                          <Text style={{ color: "white" }}>
+                            {post.comments}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
-              </View>
 
-              <View
-                style={{
-                  paddingHorizontal: 24,
-                  paddingTop: 30,
-                }}
-              >
-                <Text
+                <View
                   style={{
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    color: "#ECEBED",
+                    paddingHorizontal: 24,
+                    paddingTop: 30,
                   }}
                 >
-                  Comments (45)
-                </Text>
-                {/* Comments holder */}
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      letterSpacing: 2,
+                      color: "#ECEBED",
+                    }}
+                  >
+                    Comments (45)
+                  </Text>
+                  {/* Comments holder */}
+                </View>
               </View>
-            </View>
-          )}
-          data={comments}
-          renderItem={(comment) => <Comment />}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{
-            gap: 25,
-          }}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+            )}
+            data={comments}
+            renderItem={(comment) => <Comment />}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{
+              gap: 25,
+            }}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
 
-      {/* <View
+        {/* <View
           style={{
             position: "absolute",
             width: "100%",
@@ -295,8 +319,9 @@ const PostDetails = () => {
             </LinearGradient>
           </View>
         </View> */}
-      <Input type="comment" />
-    </View>
+        <Input type="comment" />
+      </View>
+    )
   );
 };
 

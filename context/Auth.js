@@ -7,7 +7,10 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({
+    auth: true,
+    name: "salman",
+  });
   // console.log("user", user);
 
   const register = () => {

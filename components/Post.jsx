@@ -9,6 +9,7 @@ const Post = ({ post }) => {
   // const { id, image } = post;
   const router = useRouter();
   // console.log(image);
+  // console.log(post.imageurl);
 
   const handleLikes = () => {
     post.isLiked = !post.isLiked;
@@ -66,7 +67,7 @@ const Post = ({ post }) => {
                   color: "#ECEBED",
                 }}
               >
-                Jacob Washington
+                {post.username}
               </Text>
               <Text
                 style={{
@@ -74,7 +75,7 @@ const Post = ({ post }) => {
                   color: "#727477",
                 }}
               >
-                20m ago
+                {post.timestamp}
               </Text>
             </View>
           </View>
@@ -94,7 +95,7 @@ const Post = ({ post }) => {
             gap: 10,
           }}
         >
-          {post.image && (
+          {post.imageurl && (
             <View
               style={{
                 width: 327,
@@ -102,11 +103,12 @@ const Post = ({ post }) => {
               }}
             >
               <Image
-                source={require("../assets/images/Rectangle 5.png")}
+                source={{ uri: post.imageurl }}
                 style={{
                   width: "100%",
                   height: "100%",
-                  resizeMode: "contain",
+                  resizeMode: "stretch",
+                  borderRadius: 10,
                 }}
               />
             </View>
@@ -119,8 +121,7 @@ const Post = ({ post }) => {
               width: "90%",
             }}
           >
-            “If you think you are too small to make a difference, try sleeping
-            with a mosquito.” ~ Dalai Lama
+            {post.caption}
           </Text>
         </Pressable>
 
@@ -138,7 +139,7 @@ const Post = ({ post }) => {
             ) : (
               <AntDesign name="like2" size={24} color="white" />
             )}
-            <Text style={{ color: "white" }}>2,245</Text>
+            <Text style={{ color: "white" }}>{post.likes}</Text>
           </Pressable>
           <View
             style={{
@@ -148,7 +149,7 @@ const Post = ({ post }) => {
             }}
           >
             <FontAwesome5 name="comment-dots" size={24} color="white" />
-            <Text style={{ color: "white" }}>45</Text>
+            <Text style={{ color: "white" }}>{post.comments}</Text>
           </View>
         </View>
       </View>

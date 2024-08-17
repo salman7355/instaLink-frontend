@@ -36,6 +36,18 @@ const add = () => {
     }
   };
 
+  const addPost =  async()=>{
+    const res   = await fetch("",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+       
+      })
+    })
+  }
+
   return (
     <View
       style={{

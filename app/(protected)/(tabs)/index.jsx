@@ -1,12 +1,28 @@
-import { View, Text, Image, FlatList, Pressable } from "react-native";
-import React, { useState } from "react";
-import { useRouter } from "expo-router";
+import { View, Text, Image, FlatList, Pressable, LogBox } from "react-native";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSegments } from "expo-router";
 import Story from "../../../components/Story";
 import Post from "../../../components/Post";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
 
 const index = () => {
   const router = useRouter();
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    const res = await fetch("http://192.168.100.6:3000/posts/all");
+    const data = await res.json();
+
+    // console.log(data);
+    if (data) {
+      setPosts(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const stories = [
     {
@@ -26,29 +42,6 @@ const index = () => {
     },
     {
       id: 6,
-    },
-  ];
-
-  const posts = [
-    {
-      id: 1,
-      image: false,
-      isLiked: true,
-    },
-    {
-      id: 2,
-      image: true,
-      isLiked: true,
-    },
-    {
-      id: 3,
-      image: false,
-      isLiked: false,
-    },
-    {
-      id: 4,
-      image: false,
-      isLiked: false,
     },
   ];
 
