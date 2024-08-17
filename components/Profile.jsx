@@ -18,7 +18,7 @@ const Profile = ({ myProfile }) => {
   // console.log(myProfile);
   const [selectedTab, setSelectedTab] = useState("posts");
   const [showLogout, setShowLogout] = useState(false);
-  const { Logout } = useAuth();
+  const { signout } = useAuth();
 
   const myPosts = [
     {
@@ -74,7 +74,7 @@ const Profile = ({ myProfile }) => {
               />
               {showLogout && (
                 <TouchableOpacity
-                  onPress={Logout}
+                  onPress={signout}
                   style={{
                     width: 100,
                     height: 40,
