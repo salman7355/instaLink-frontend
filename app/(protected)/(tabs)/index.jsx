@@ -5,13 +5,16 @@ import Story from "../../../components/Story";
 import Post from "../../../components/Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
+import { useAuth } from "../../../context/Auth";
+import { API_URL } from "@env";
 
 const index = () => {
   const router = useRouter();
   const [posts, setPosts] = useState([]);
+  const { user } = useAuth();
 
   const fetchPosts = async () => {
-    const res = await fetch("http://192.168.100.6:3000/posts/all");
+    const res = await fetch(`${API_URL}/posts/all`);
     const data = await res.json();
 
     // console.log(data);
@@ -80,7 +83,7 @@ const index = () => {
                     fontSize: 18,
                   }}
                 >
-                  Good Morning, Alex.
+                  Good Morning, {user?.username}.
                 </Text>
                 <Pressable
                   onPress={() => {

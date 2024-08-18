@@ -14,15 +14,46 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
+import { storage } from "../../../firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useAuth } from "../../../context/Auth";
+import { API_URL } from "@env";
 
 const add = () => {
-  const [text, setText] = useState();
+  const [caption, setCaption] = useState("");
   const [add, setAdd] = useState(false);
   const router = useRouter();
-  const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState("post");
-
+  const { user } = useAuth();
   const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            console.log(user.id);
+            console.log(caption);
+            addPost();
+          }}
+          style={{
+            backgroundColor: "#F62E8E",
+            width: 70,
+            height: 24,
+            borderRadius: 24,
+            justifyContent: "center",
+            alignItems: "center",
+            marginEnd: 24,
+            marginTop: 30,
+          }}
+        >
+          <Text>Publish</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [caption, imageUrl]);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -33,20 +64,54 @@ const add = () => {
     });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      await uploadImage(result.assets[0].uri);
     }
   };
 
-  const addPost =  async()=>{
-    const res   = await fetch("",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
+  const uploadImage = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const storageRef = ref(storage, "posts/" + Date.now());
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Progress" + progress + "% done");
       },
-      body:JSON.stringify({
-       
-      })
-    })
-  }
+      (error) => {
+        // error handling
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          console.log("file availabe at" + downloadURL);
+          setImageUrl(downloadURL);
+        });
+      }
+    );
+  };
+
+  const addPost = async () => {
+    const res = await fetch(`${API_URL}/posts/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user.id,
+        caption: caption,
+        imageurl: imageUrl,
+      }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      console.log(data.error);
+    } else {
+      router.push("/(protected)/(tabs)");
+    }
+  };
 
   return (
     <View
@@ -91,7 +156,7 @@ const add = () => {
             width: "85%",
           }}
           multiline
-          onChangeText={setText}
+          onChangeText={setCaption}
         />
       </View>
       <View

@@ -12,14 +12,18 @@ import CustomButton from "../components/CustomButton";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/Auth";
 import * as ImagePicker from "expo-image-picker";
+import { storage } from "../firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const register = () => {
   const [Username, setUsername] = useState("");
   const [DateOfBirth, setDateOfBirth] = useState("");
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
+  const [Mobile, setMobile] = useState("");
   const router = useRouter();
   const [image, setImage] = useState(null);
+  const [imageurl, setImageUrl] = useState(null);
   const { register } = useAuth();
 
   const pickImage = async () => {
@@ -31,7 +35,33 @@ const register = () => {
     });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      await uploadImage(result.assets[0].uri);
     }
+  };
+
+  const uploadImage = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const storageRef = ref(storage, "users/" + Date.now());
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Progress" + progress + "% done");
+      },
+      (error) => {
+        // error handling
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          console.log("file availabe at" + downloadURL);
+          setImageUrl(downloadURL);
+        });
+      }
+    );
   };
 
   return (
@@ -68,7 +98,7 @@ const register = () => {
           Create An Account and Sign Up
         </Text>
         <Pressable
-          //   onPress={pickImage}
+          onPress={pickImage}
           style={{
             width: 100,
             height: 100,
@@ -136,6 +166,26 @@ const register = () => {
               color: "#ccc",
             }}
           >
+            Mobile
+          </Text>
+          <TextInput
+            style={{
+              backgroundColor: "#c2c3c5",
+              paddingVertical: 10,
+              paddingHorizontal: 10,
+              borderRadius: 10,
+            }}
+            placeholder="01XXXXXXXXX"
+            onChangeText={setMobile}
+          />
+        </View>
+
+        <View style={{ gap: 5 }}>
+          <Text
+            style={{
+              color: "#ccc",
+            }}
+          >
             Email
           </Text>
           <TextInput
@@ -183,7 +233,19 @@ const register = () => {
             height: 40,
           }}
         >
-          <CustomButton text={"Create an Account"} action={register} />
+          <CustomButton
+            text={"Create an Account"}
+            action={() => {
+              register(
+                Username,
+                Email,
+                Password,
+                imageurl,
+                DateOfBirth,
+                Mobile
+              );
+            }}
+          />
         </View>
 
         <Text

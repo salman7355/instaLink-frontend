@@ -58,7 +58,7 @@ export default function login() {
           }}
         >
           <TextInput
-            placeholder="Username"
+            placeholder="Email"
             onChangeText={setUsername}
             placeholderTextColor="#ECEBED"
             style={{
@@ -99,7 +99,12 @@ export default function login() {
             height: 40,
           }}
         >
-          <CustomButton text={"Log In"} action={signIn} />
+          <CustomButton
+            text={"Log In"}
+            action={() => {
+              signIn(Username, Password);
+            }}
+          />
         </View>
       </View>
 

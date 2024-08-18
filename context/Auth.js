@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { API_URL } from "@env";
 
 const AuthContext = createContext();
 
@@ -8,27 +9,76 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState({
-    auth: true,
-    name: "salman",
+    auth: false,
   });
   // console.log("user", user);
 
-  const register = () => {
-    setUser({
-      auth: true,
-      name: "salman",
-    });
+  const register = async (
+    username,
+    email,
+    password,
+    profilepictureurl,
+    dateofbirth,
+    mobile
+  ) => {
+    try {
+      const res = await fetch(`${API_URL}/users/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          profilepictureurl,
+          dateofbirth,
+          mobile,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setUser({
+          auth: true,
+          ...data,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const signIn = () => {
-    setUser({
-      auth: true,
-      name: "salman",
-    });
+  const signIn = async (email, password) => {
+    try {
+      const res = await fetch(`${API_URL}/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setUser({
+          auth: true,
+          ...data,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const signout = () => {
-    setUser(null);
+    setUser({
+      auth: false,
+    });
   };
 
   return (

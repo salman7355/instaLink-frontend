@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function TabsLayout() {
-    const router = useRouter();
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -87,22 +87,6 @@ export default function TabsLayout() {
               >
                 Discard
               </Text>
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#F62E8E",
-                width: 70,
-                height: 24,
-                borderRadius: 24,
-                justifyContent: "center",
-                alignItems: "center",
-                marginEnd: 24,
-                marginTop: 30,
-              }}
-            >
-              <Text>Publish</Text>
             </TouchableOpacity>
           ),
         }}

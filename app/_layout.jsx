@@ -10,7 +10,7 @@ const StackLayout = () => {
   useEffect(() => {
     const inAuthGroup = segments[0] === "(protected)";
 
-    if (!user && inAuthGroup) {
+    if (!user?.auth && inAuthGroup) {
       router.replace("/login");
     } else if (user?.auth === true) {
       router.replace("/(protected)/(tabs)");
