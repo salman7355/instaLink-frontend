@@ -25,7 +25,7 @@ const index = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [router]);
 
   const stories = [
     {
@@ -130,7 +130,7 @@ const index = () => {
               </View>
 
               {/* Stories */}
-              {stories.length > 0 && (
+              {/* {stories.length > 0 && (
                 <View
                   style={{
                     marginTop: 30,
@@ -152,7 +152,7 @@ const index = () => {
                     }}
                   />
                 </View>
-              )}
+              )} */}
 
               {/* border */}
               <View

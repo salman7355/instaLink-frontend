@@ -5,8 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Profile from "../../../components/Profile";
 
 const SearchedUser = () => {
-  const { user } = useLocalSearchParams();
-  const { id } = JSON.parse(user);
+  const { id } = useLocalSearchParams();
 
   return (
     <View
@@ -15,7 +14,7 @@ const SearchedUser = () => {
         backgroundColor: "#181a1c",
       }}
     >
-      <Profile myProfile={false} />
+      <Profile myProfile={false} userId={id} />
     </View>
   );
 };

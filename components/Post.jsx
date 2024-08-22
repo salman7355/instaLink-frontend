@@ -4,15 +4,44 @@ import { useRouter } from "expo-router";
 import Story from "../components/Story";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { API_URL } from "@env";
+import { useAuth } from "../context/Auth";
 
 const Post = ({ post }) => {
-  // const { id, image } = post;
+  const {
+    user: { id },
+  } = useAuth();
   const router = useRouter();
-  // console.log(image);
-  // console.log(post.imageurl);
 
-  const handleLikes = () => {
-    post.isLiked = !post.isLiked;
+  const [like, setLike] = useState();
+  const [newLikeCount, setNewLikeCount] = useState(post.likes);
+
+  const addLike = async () => {
+    setLike(!like);
+    if (like) {
+      setNewLikeCount(newLikeCount - 1);
+    } else {
+      setNewLikeCount(newLikeCount + 1);
+    }
+    try {
+      const res = await fetch(`${API_URL}/posts/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: post.id,
+          userId: id,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        console.log(data.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -51,7 +80,7 @@ const Post = ({ post }) => {
               }}
             >
               <Image
-                source={require("../assets/images/Profile Photo.png")}
+                source={{ uri: post.profilepictureurl }}
                 style={{
                   borderRadius: 32,
                   width: "100%",
@@ -127,21 +156,28 @@ const Post = ({ post }) => {
 
         <View style={{ flexDirection: "row", gap: 30 }}>
           <Pressable
-            onPress={handleLikes}
+            onPress={() => {
+              addLike();
+            }}
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: 10,
             }}
           >
-            {post.isLiked === true ? (
+            {like === true ? (
               <AntDesign name="like1" size={24} color="#f62e8e" />
             ) : (
               <AntDesign name="like2" size={24} color="white" />
             )}
-            <Text style={{ color: "white" }}>{post.likes}</Text>
+            <Text style={{ color: "white" }}>{newLikeCount}</Text>
           </Pressable>
-          <View
+          <Pressable
+            onPress={() => {
+              router.push({
+                pathname: `/post/${post.id}`,
+              });
+            }}
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -150,7 +186,7 @@ const Post = ({ post }) => {
           >
             <FontAwesome5 name="comment-dots" size={24} color="white" />
             <Text style={{ color: "white" }}>{post.comments}</Text>
-          </View>
+          </Pressable>
         </View>
       </View>
     </View>

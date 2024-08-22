@@ -1,7 +1,7 @@
 import { View, Text, Image, FlatList, Pressable } from "react-native";
 import React from "react";
 
-const Comment = () => {
+const Comment = ({ comment }) => {
   return (
     <View
       style={{
@@ -25,7 +25,7 @@ const Comment = () => {
             borderRadius: 100,
             resizeMode: "cover",
           }}
-          source={require("../assets/images/Profile Photo.png")}
+          source={{ uri: comment.profilepictureurl }}
         />
       </View>
       <View
@@ -40,7 +40,7 @@ const Comment = () => {
             fontWeight: "bold",
           }}
         >
-          Jessica Thompson
+          {comment.username}
         </Text>
         <Text
           style={{
@@ -48,7 +48,7 @@ const Comment = () => {
             fontSize: 13,
           }}
         >
-          ❤️
+          {comment.comment}
         </Text>
         <Text
           style={{
@@ -56,7 +56,7 @@ const Comment = () => {
             fontSize: 13,
           }}
         >
-          2m ago
+          {comment.timestamp}
         </Text>
       </View>
     </View>

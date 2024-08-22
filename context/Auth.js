@@ -9,7 +9,16 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState({
-    auth: false,
+    auth: true,
+    id: 3,
+    username: "Salman",
+    email: "salman@test.com",
+    password: "test",
+    profilepictureurl: "null",
+    followers: 0,
+    following: 0,
+    dateofbirth: "2002-01-09T22:00:00.000Z",
+    mobile: "01234567890",
   });
   // console.log("user", user);
 

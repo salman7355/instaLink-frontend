@@ -6,14 +6,41 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/Auth";
+import { API_URL } from "@env";
 
-const Input = ({ type }) => {
+const Input = ({ type, onCommentAdded }) => {
+  const { id } = useLocalSearchParams();
+  const { user } = useAuth();
+  const [comment, setComment] = useState("");
+  const inputRef = useRef();
+
+  const addComment = async () => {
+    const res = await fetch(`${API_URL}/posts/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        postId: id,
+        userId: user.id,
+        comment: comment,
+      }),
+    });
+    const data = await res.json();
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
+    setInputValue("");
+    onCommentAdded();
+  };
+
   return (
     <View
       style={{
@@ -46,6 +73,7 @@ const Input = ({ type }) => {
               : "Type your comment here..."
           }
           placeholderTextColor="#ECEBED"
+          onChangeText={setComment}
           style={{
             color: "#ECEBED",
             fontSize: 14,
@@ -63,7 +91,7 @@ const Input = ({ type }) => {
             alignItems: "center",
           }}
         >
-          <Ionicons name="send" size={20} color="white" />
+          <Ionicons name="send" size={20} color="white" onPress={addComment} />
         </LinearGradient>
       </View>
     </View>

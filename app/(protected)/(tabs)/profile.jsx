@@ -13,34 +13,13 @@ import Post from "../../../components/Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import Profile from "../../../components/Profile";
+import { API_URL } from "@env";
+import { useAuth } from "../../../context/Auth";
 
 const profile = () => {
-  const [selectedTab, setSelectedTab] = useState("posts");
-
-  const myPosts = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-  ];
-
-  const myLikes = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-  ];
-
+  const {
+    user: { id },
+  } = useAuth();
   return (
     <SafeAreaView
       style={{
@@ -48,7 +27,7 @@ const profile = () => {
         backgroundColor: "#181a1c",
       }}
     >
-      <Profile myProfile={true} />
+      <Profile myProfile={true} userId={id} />
     </SafeAreaView>
   );
 };

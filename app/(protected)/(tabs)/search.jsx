@@ -12,12 +12,24 @@ import { Ionicons } from "@expo/vector-icons";
 import SearchedUser from "../../../components/SearchedUser";
 import { useNavigation, useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 const search = () => {
   const navigation = useNavigation();
-
   const router = useRouter();
   const [search, setSearch] = useState("");
+
+  const [users, setUsers] = useState([]);
+
+  const searchUsers = async () => {
+    try {
+      const res = await fetch(`${API_URL}/users/search/${search}`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -43,23 +55,9 @@ const search = () => {
     }, [navigation])
   );
 
-  const users = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-  ];
+  useEffect(() => {
+    searchUsers();
+  }, [search]);
 
   return (
     <View

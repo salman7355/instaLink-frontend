@@ -8,32 +8,40 @@ import {
   Pressable,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import Post from "./Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../context/Auth";
+import { API_URL } from "@env";
 
-const Profile = ({ myProfile }) => {
+const Profile = ({ myProfile, userId }) => {
   // console.log(myProfile);
   const [selectedTab, setSelectedTab] = useState("posts");
   const [showLogout, setShowLogout] = useState(false);
   const { signout } = useAuth();
+  const [posts, setPosts] = useState([]);
 
-  const myPosts = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-  ];
+  const getUserPosts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/posts/user/${userId}`);
+      const data = await res.json();
+
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setPosts(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserPosts();
+
+    // console.log(posts);
+  }, []);
 
   const myLikes = [
     {
@@ -121,11 +129,12 @@ const Profile = ({ myProfile }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/images/Profile Photo.png")}
+                  source={{ uri: posts[0]?.profilepictureurl }}
                   style={{
                     width: "90%",
                     height: "90%",
                     resizeMode: "cover",
+                    borderRadius: 150,
                   }}
                 />
               </View>
@@ -144,19 +153,20 @@ const Profile = ({ myProfile }) => {
                   color: "white",
                 }}
               >
-                Alex Tsimikas
+                {posts[0]?.username}
               </Text>
-              <Text
+              {/* <Text
                 style={{
                   color: "#727477",
                   fontSize: 14,
                 }}
               >
                 Brooklyn, NY
-              </Text>
+              </Text> */}
               <Text
                 style={{
-                  color: "#ECEBED",
+                  // color: "#ECEBED",
+                  color: "#727477",
                   fontSize: 14,
                 }}
               >
@@ -181,7 +191,7 @@ const Profile = ({ myProfile }) => {
                     color: "white",
                   }}
                 >
-                  2,467
+                  {posts[0]?.followers}
                 </Text>
                 <Text
                   style={{
@@ -201,7 +211,7 @@ const Profile = ({ myProfile }) => {
                     color: "white",
                   }}
                 >
-                  1,533
+                  {posts[0]?.following}
                 </Text>
                 <Text
                   style={{
@@ -329,7 +339,7 @@ const Profile = ({ myProfile }) => {
             </View>
           </View>
         )}
-        data={selectedTab === "posts" ? myPosts : myLikes}
+        data={selectedTab === "posts" ? posts : myLikes}
         renderItem={(post) => <Post post={post.item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{

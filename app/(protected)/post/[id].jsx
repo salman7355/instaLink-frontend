@@ -16,71 +16,87 @@ import Post from "../../../components/Post";
 import Comment from "../../../components/Comment";
 import { LinearGradient } from "expo-linear-gradient";
 import Input from "../../../components/Input";
+import { API_URL } from "@env";
+import { useAuth } from "../../../context/Auth";
 
 const PostDetails = () => {
   const { id } = useLocalSearchParams();
+  const { user } = useAuth();
   const [post, setPost] = useState({});
-  // console.log(id);
+  const [comments, setComments] = useState([]);
+  const [newCommentAdded, setNewCommentAdded] = useState(false); // State to trigger re-fetch
+  const [newLikeCount, setNewLikeCount] = useState();
+  const [like, setLike] = useState();
+
+  const addLike = async () => {
+    setLike(!like);
+    if (like) {
+      setNewLikeCount(newLikeCount - 1);
+    } else {
+      setNewLikeCount(newLikeCount + 1);
+    }
+    try {
+      const res = await fetch(`${API_URL}/posts/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: id,
+          userId: user.id,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        console.log(data.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchPost = async () => {
     const res = await fetch(`http://192.168.100.6:3000/posts/${id}`);
     const data = await res.json();
-    // console.log(data);
-
     if (data) {
       setPost(data);
+      setNewLikeCount(data.likes);
     }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(`${API_URL}/posts/comment/${id}`);
+      const data = await res.json();
+      if (data) {
+        setComments(data);
+      } else {
+        console.log("No comments found");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleNewComment = () => {
+    setNewCommentAdded((prev) => !prev); // Toggle state to trigger re-fetch
   };
 
   useEffect(() => {
     fetchPost();
-  }, []);
+    fetchComments();
+  }, [newCommentAdded, newLikeCount]);
 
   // console.log(post);
 
   // const parsedPost = JSON.parse(post);
   // console.log(parsedPost.imageurl);
 
-  const isLiked = false;
+  // const isLiked = false;
 
   //   console.log(id);
   //   console.log(image);
-
-  const comments = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
-    },
-    {
-      id: 7,
-    },
-    {
-      id: 8,
-    },
-    {
-      id: 9,
-    },
-    {
-      id: 10,
-    },
-    {
-      id: 11,
-    },
-  ];
 
   return (
     post && (
@@ -137,7 +153,7 @@ const PostDetails = () => {
                             }}
                           >
                             <Image
-                              source={require("../../../assets/images/Profile Photo.png")}
+                              source={{ uri: post.profilepictureurl }}
                               style={{
                                 borderRadius: 32,
                                 width: "100%",
@@ -206,21 +222,22 @@ const PostDetails = () => {
                       </View>
 
                       <View style={{ flexDirection: "row", gap: 30 }}>
-                        <View
+                        <Pressable
+                          onPress={addLike}
                           style={{
                             flexDirection: "row",
                             alignItems: "center",
                             gap: 10,
                           }}
                         >
-                          {isLiked === true ? (
+                          {like === true ? (
                             <AntDesign name="like1" size={24} color="#f62e8e" />
                           ) : (
                             <AntDesign name="like2" size={24} color="white" />
                           )}
 
-                          <Text style={{ color: "white" }}>{post.likes}</Text>
-                        </View>
+                          <Text style={{ color: "white" }}>{newLikeCount}</Text>
+                        </Pressable>
                         <View
                           style={{
                             flexDirection: "row",
@@ -255,14 +272,14 @@ const PostDetails = () => {
                       color: "#ECEBED",
                     }}
                   >
-                    Comments (45)
+                    Comments ({post.comments})
                   </Text>
                   {/* Comments holder */}
                 </View>
               </View>
             )}
             data={comments}
-            renderItem={(comment) => <Comment />}
+            renderItem={(comment) => <Comment comment={comment.item} />}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{
               gap: 25,
@@ -271,55 +288,7 @@ const PostDetails = () => {
           />
         </View>
 
-        {/* <View
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: 88,
-            bottom: 0,
-            backgroundColor: "black",
-            paddingHorizontal: 24,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "#323436",
-              borderRadius: 32,
-              // paddingTop: 20,
-              marginTop: 20,
-              height: 40,
-              paddingLeft: 24,
-              paddingRight: 5,
-            }}
-          >
-            <TextInput
-              placeholder="Type your comment here..."
-              placeholderTextColor="#ECEBED"
-              style={{
-                color: "#ECEBED",
-                fontSize: 14,
-              }}
-            />
-            <LinearGradient
-              colors={["rgb(246, 46, 143)", "rgb(172, 26, 239)"]}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 32,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Ionicons name="send" size={20} color="white" />
-            </LinearGradient>
-          </View>
-        </View> */}
-        <Input type="comment" />
+        <Input type="comment" onCommentAdded={handleNewComment} />
       </View>
     )
   );

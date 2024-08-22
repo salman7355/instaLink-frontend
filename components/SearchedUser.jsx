@@ -4,16 +4,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 const SearchedUser = ({ user }) => {
-  const { id } = user;
+  // console.log(user);
+
   const router = useRouter();
   return (
     <Pressable
       onPress={() => {
         router.push({
-          pathname: `searchProfile/${id}`,
-          params: {
-            user: JSON.stringify(user),
-          },
+          pathname: `searchProfile/${user.id}`,
+          // params: {
+          //   user: JSON.stringify(user),
+          // },
         });
       }}
       style={{
@@ -30,11 +31,12 @@ const SearchedUser = ({ user }) => {
         }}
       >
         <Image
-          source={require("../assets/images/Profile Photo.png")}
+          source={{ uri: user.profilepictureurl }}
           style={{
             width: "100%",
             height: "100%",
             resizeMode: "cover",
+            borderRadius: 45,
           }}
         />
       </View>
@@ -46,7 +48,7 @@ const SearchedUser = ({ user }) => {
             color: "white",
           }}
         >
-          Salman Mohamed
+          {user.username}
         </Text>
         <Text
           style={{
@@ -54,7 +56,7 @@ const SearchedUser = ({ user }) => {
             color: "white",
           }}
         >
-          31.8 followers
+          {user.followers} followers
         </Text>
       </View>
     </Pressable>
