@@ -11,78 +11,78 @@ import * as Device from "expo-device";
 export default function TabsLayout() {
   const router = useRouter();
   const { user } = useAuth();
-  const [expoPushToken, setExpoPushToken] = useState();
+  // const [expoPushToken, setExpoPushToken] = useState();
 
-  async function registerForPushNotificationsAsync() {
-    let token;
+  // async function registerForPushNotificationsAsync() {
+  //   let token;
 
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
+  //   if (Platform.OS === "android") {
+  //     await Notifications.setNotificationChannelAsync("default", {
+  //       name: "default",
+  //       importance: Notifications.AndroidImportance.MAX,
+  //       vibrationPattern: [0, 250, 250, 250],
+  //       lightColor: "#FF231F7C",
+  //     });
+  //   }
 
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
-        return;
-      }
-      // Learn more about projectId:
-      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-      // EAS projectId is used here.
-      try {
-        const projectId =
-          Constants?.expoConfig?.extra?.eas?.projectId ??
-          Constants?.easConfig?.projectId;
-        if (!projectId) {
-          throw new Error("Project ID not found");
-        }
-        token = (
-          await Notifications.getExpoPushTokenAsync({
-            projectId,
-          })
-        ).data;
-      } catch (e) {
-        token = `${e}`;
-      }
-    } else {
-      alert("Must use physical device for Push Notifications");
-    }
+  //   if (Device.isDevice) {
+  //     const { status: existingStatus } =
+  //       await Notifications.getPermissionsAsync();
+  //     let finalStatus = existingStatus;
+  //     if (existingStatus !== "granted") {
+  //       const { status } = await Notifications.requestPermissionsAsync();
+  //       finalStatus = status;
+  //     }
+  //     if (finalStatus !== "granted") {
+  //       alert("Failed to get push token for push notification!");
+  //       return;
+  //     }
+  //     // Learn more about projectId:
+  //     // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+  //     // EAS projectId is used here.
+  //     try {
+  //       const projectId =
+  //         Constants?.expoConfig?.extra?.eas?.projectId ??
+  //         Constants?.easConfig?.projectId;
+  //       if (!projectId) {
+  //         throw new Error("Project ID not found");
+  //       }
+  //       token = (
+  //         await Notifications.getExpoPushTokenAsync({
+  //           projectId,
+  //         })
+  //       ).data;
+  //     } catch (e) {
+  //       token = `${e}`;
+  //     }
+  //   } else {
+  //     alert("Must use physical device for Push Notifications");
+  //   }
 
-    return token;
-  }
+  //   return token;
+  // }
 
-  const savetokenToServer = async (token) => {
-    const response = await fetch(`${API_URL}/Notification/save-token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        user_id: user.id,
-      }),
-    });
-    const data = await response.json();
-    console.log(data);
-  };
+  // const savetokenToServer = async (token) => {
+  //   const response = await fetch(`${API_URL}/Notification/save-token`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       token: token,
+  //       user_id: user.id,
+  //     }),
+  //   });
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
 
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
-      setExpoPushToken(token);
-      savetokenToServer(expoPushToken);
-    });
-  }, []);
+  // useEffect(() => {
+  //   registerForPushNotificationsAsync().then((token) => {
+  //     setExpoPushToken(token);
+  //     savetokenToServer(expoPushToken);
+  //   });
+  // }, []);
 
   return (
     <Stack>

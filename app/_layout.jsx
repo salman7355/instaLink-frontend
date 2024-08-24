@@ -1,6 +1,8 @@
 import { Slot, Stack, useRouter, useSegments } from "expo-router";
 import { AuthProvider, useAuth } from "../context/Auth";
 import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import { Alert } from "react-native";
 
 const StackLayout = () => {
   const { user } = useAuth();
@@ -15,6 +17,26 @@ const StackLayout = () => {
     } else if (user?.auth === true) {
       router.replace("/(protected)/(tabs)");
     }
+
+    // Notifications
+    const subscriptionForeground =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("Notification received in foreground:", notification);
+        Alert.alert(
+          notification.request.content.title,
+          notification.request.content.body
+        );
+      });
+
+    const subscriptionBackground =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("Notification response received:", response);
+      });
+
+    return () => {
+      subscriptionForeground.remove();
+      subscriptionBackground.remove();
+    };
   }, [user]);
 
   return (

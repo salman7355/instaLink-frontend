@@ -20,8 +20,13 @@ const Input = ({ type, onCommentAdded }) => {
   const { user } = useAuth();
   const [comment, setComment] = useState("");
   const inputRef = useRef();
+  const [submit, setSubmit] = useState(false);
 
   const addComment = async () => {
+    if (!comment.trim()) {
+      return Alert.alert("Error", "Comment cannot be empty");
+    }
+
     const res = await fetch(`${API_URL}/posts/comment`, {
       method: "POST",
       headers: {
@@ -37,7 +42,8 @@ const Input = ({ type, onCommentAdded }) => {
     if (inputRef.current) {
       inputRef.current.blur();
     }
-    setInputValue("");
+    setSubmit(true);
+    setComment("");
     onCommentAdded();
   };
 
@@ -74,6 +80,8 @@ const Input = ({ type, onCommentAdded }) => {
           }
           placeholderTextColor="#ECEBED"
           onChangeText={setComment}
+          // blurOnSubmit={submit}
+          ref={inputRef}
           style={{
             color: "#ECEBED",
             fontSize: 14,
