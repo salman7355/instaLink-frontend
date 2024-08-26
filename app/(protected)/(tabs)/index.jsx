@@ -14,7 +14,7 @@ import Post from "../../../components/Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
@@ -23,8 +23,14 @@ const index = () => {
   const router = useRouter();
   const [posts, setPosts] = useState([]);
   const { user } = useAuth();
-
   const [expoPushToken, setExpoPushToken] = useState();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchPosts();
+    setRefreshing(false);
+  };
 
   async function registerForPushNotificationsAsync() {
     let token;
@@ -76,23 +82,27 @@ const index = () => {
   }
 
   const savetokenToServer = async (token) => {
-    const response = await fetch(`${API_URL}/Notification/save-token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        user_id: user.id,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/Notification/save-token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          user_id: user.id,
+        }),
+      }
+    );
     const data = await response.json();
     console.log(data);
   };
 
   const fetchPosts = async () => {
-    const res = await fetch(`${API_URL}/posts/all`);
+    const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/all`);
     const data = await res.json();
+    // console.log("fetchinggggg");
 
     // console.log(data);
     if (data) {
@@ -256,6 +266,8 @@ const index = () => {
           contentContainerStyle={{
             gap: 20,
           }}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
           showsVerticalScrollIndicator={false}
         />
       </View>

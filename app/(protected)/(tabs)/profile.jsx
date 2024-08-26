@@ -13,7 +13,7 @@ import Post from "../../../components/Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import Profile from "../../../components/Profile";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 import { useAuth } from "../../../context/Auth";
 
 const profile = () => {

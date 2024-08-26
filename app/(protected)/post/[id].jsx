@@ -16,7 +16,7 @@ import Post from "../../../components/Post";
 import Comment from "../../../components/Comment";
 import { LinearGradient } from "expo-linear-gradient";
 import Input from "../../../components/Input";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 import { useAuth } from "../../../context/Auth";
 
 const PostDetails = () => {
@@ -36,7 +36,7 @@ const PostDetails = () => {
       setNewLikeCount(newLikeCount + 1);
     }
     try {
-      const res = await fetch(`${API_URL}/posts/like`, {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,7 @@ const PostDetails = () => {
   };
 
   const fetchPost = async () => {
-    const res = await fetch(`http://192.168.100.6:3000/posts/${id}`);
+    const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/${id}`);
     const data = await res.json();
     if (data) {
       setPost(data);
@@ -67,7 +67,9 @@ const PostDetails = () => {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`${API_URL}/posts/comment/${id}`);
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/posts/comment/${id}`
+      );
       const data = await res.json();
       if (data) {
         setComments(data);

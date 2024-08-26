@@ -17,7 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../../context/Auth";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 
 const add = () => {
   const [caption, setCaption] = useState("");
@@ -94,7 +94,7 @@ const add = () => {
   };
 
   const addPost = async () => {
-    const res = await fetch(`${API_URL}/posts/add`, {
+    const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

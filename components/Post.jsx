@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import Story from "../components/Story";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { API_URL } from "@env";
 import { useAuth } from "../context/Auth";
 
 const Post = ({ post }) => {
@@ -24,7 +23,7 @@ const Post = ({ post }) => {
       setNewLikeCount(newLikeCount + 1);
     }
     try {
-      const res = await fetch(`${API_URL}/posts/like`, {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

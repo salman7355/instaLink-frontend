@@ -13,7 +13,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../context/Auth";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 
 const Input = ({ type, onCommentAdded }) => {
   const { id } = useLocalSearchParams();
@@ -27,17 +27,20 @@ const Input = ({ type, onCommentAdded }) => {
       return Alert.alert("Error", "Comment cannot be empty");
     }
 
-    const res = await fetch(`${API_URL}/posts/comment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        postId: id,
-        userId: user.id,
-        comment: comment,
-      }),
-    });
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/posts/comment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: id,
+          userId: user.id,
+          comment: comment,
+        }),
+      }
+    );
     const data = await res.json();
     if (inputRef.current) {
       inputRef.current.blur();

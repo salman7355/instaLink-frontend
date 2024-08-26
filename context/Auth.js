@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 
 const AuthContext = createContext();
 
@@ -31,20 +31,23 @@ export function AuthProvider({ children }) {
     mobile
   ) => {
     try {
-      const res = await fetch(`${API_URL}/users/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          profilepictureurl,
-          dateofbirth,
-          mobile,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/users/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+            profilepictureurl,
+            dateofbirth,
+            mobile,
+          }),
+        }
+      );
       const data = await res.json();
 
       if (data.error) {
@@ -62,13 +65,16 @@ export function AuthProvider({ children }) {
 
   const signIn = async (email, password) => {
     try {
-      const res = await fetch(`${API_URL}/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/users/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
       const data = await res.json();
 
       if (data.error) {

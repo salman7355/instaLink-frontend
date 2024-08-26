@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Post from "./Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../context/Auth";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 
 const Profile = ({ myProfile, userId }) => {
   // console.log(myProfile);
@@ -24,7 +24,9 @@ const Profile = ({ myProfile, userId }) => {
 
   const getUserPosts = async () => {
     try {
-      const res = await fetch(`${API_URL}/posts/user/${userId}`);
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/posts/user/${userId}`
+      );
       const data = await res.json();
 
       if (data.error) {

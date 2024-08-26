@@ -4,7 +4,7 @@ import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import * as Notifications from "expo-notifications";
-import { API_URL } from "@env";
+// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 
@@ -63,7 +63,7 @@ export default function TabsLayout() {
   // }
 
   // const savetokenToServer = async (token) => {
-  //   const response = await fetch(`${API_URL}/Notification/save-token`, {
+  //   const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/Notification/save-token`, {
   //     method: "POST",
   //     headers: {
   //       "Content-Type": "application/json",
