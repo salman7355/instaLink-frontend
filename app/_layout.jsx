@@ -19,24 +19,24 @@ const StackLayout = () => {
     }
 
     // Notifications
-    const subscriptionForeground =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log("Notification received in foreground:", notification);
-        Alert.alert(
-          notification.request.content.title,
-          notification.request.content.body
-        );
-      });
+    // const subscriptionForeground =
+    //   Notifications.addNotificationReceivedListener((notification) => {
+    //     console.log("Notification received in foreground:", notification);
+    //     Alert.alert(
+    //       notification.request.content.title,
+    //       notification.request.content.body
+    //     );
+    //   });
 
-    const subscriptionBackground =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("Notification response received:", response);
-      });
+    // const subscriptionBackground =
+    //   Notifications.addNotificationResponseReceivedListener((response) => {
+    //     console.log("Notification response received:", response);
+    //   });
 
-    return () => {
-      subscriptionForeground.remove();
-      subscriptionBackground.remove();
-    };
+    // return () => {
+    //   subscriptionForeground.remove();
+    //   subscriptionBackground.remove();
+    // };
   }, [user]);
 
   return (

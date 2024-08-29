@@ -13,21 +13,39 @@ import SearchedUser from "../../../components/SearchedUser";
 import { useNavigation, useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 // import { process.env.EXPO_PUBLIC_API_URL } from "@env";
+import { useAuth } from "../../../context/Auth";
 
 const search = () => {
   const navigation = useNavigation();
   const router = useRouter();
   const [search, setSearch] = useState("");
-
+  const {
+    user: { id },
+  } = useAuth();
   const [users, setUsers] = useState([]);
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(true);
 
   const searchUsers = async () => {
     try {
+      setShowHistory(false);
       const res = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/users/search/${search}`
       );
       const data = await res.json();
       setUsers(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getSearchHistory = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/history/users/${id}`
+      );
+      const data = await res.json();
+      setSearchHistory(data);
     } catch (error) {
       console.log(error);
     }
@@ -58,8 +76,9 @@ const search = () => {
   );
 
   useEffect(() => {
-    searchUsers();
-  }, [search]);
+    getSearchHistory();
+    // searchUsers();
+  }, []);
 
   return (
     <View
@@ -85,7 +104,10 @@ const search = () => {
         }}
       >
         <TextInput
-          onChangeText={setSearch}
+          onChangeText={(text) => {
+            setSearch(text); // Update the search state with the input text
+            searchUsers(); // Optionally pass the text to your search function
+          }}
           placeholder="Search for people"
           style={{
             color: "#727477",
@@ -103,7 +125,7 @@ const search = () => {
         }}
       >
         <FlatList
-          data={users}
+          data={showHistory ? searchHistory : users}
           renderItem={(user) => <SearchedUser user={user.item} />}
           keyExtractor={(user) => user.id}
           contentContainerStyle={{

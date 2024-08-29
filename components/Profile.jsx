@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Post from "./Post";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../context/Auth";
+
 // import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 
 const Profile = ({ myProfile, userId }) => {
@@ -21,6 +22,32 @@ const Profile = ({ myProfile, userId }) => {
   const [showLogout, setShowLogout] = useState(false);
   const { signout } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [friends, setFriends] = useState();
+  const [likedPosts, setLikedPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const {
+    user: { id },
+  } = useAuth();
+
+  const addToSearchHistory = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/history/users`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: id, searchedUserId: userId }),
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // addToSearchHistory();
 
   const getUserPosts = async () => {
     try {
@@ -39,20 +66,102 @@ const Profile = ({ myProfile, userId }) => {
     }
   };
 
+  const follow = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/friends/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: id, friend_id: userId }),
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+      setFriends("true");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkIfFollowing = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/friends/check`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: id, friend_id: userId }),
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+      setFriends(data?.friends);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // checkIfFollowing();
+
+  const unfollow = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/friends/remove`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: id, friend_id: userId }),
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+      setFriends("false");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getLikedPosts = async () => {
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/posts/likes/${userId}`
+    );
+    const data = await res.json();
+    setLikedPosts(data);
+  };
+
   useEffect(() => {
     getUserPosts();
-
+    getLikedPosts();
+    // checkIfFollowing();
+    addToSearchHistory();
     // console.log(posts);
   }, []);
 
-  const myLikes = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-  ];
+  useEffect(() => {
+    checkIfFollowing();
+  }, [friends]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    getLikedPosts();
+    getUserPosts();
+    setRefreshing(false);
+  };
+
+  // const myLikes = [
+  //   {
+  //     id: 1,
+  //   },
+  //   {
+  //     id: 2,
+  //   },
+  // ];
 
   return (
     <View>
@@ -265,15 +374,29 @@ const Profile = ({ myProfile, userId }) => {
                       backgroundColor: "#f62e8e",
                     }}
                   >
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: 14,
-                        color: "white",
-                      }}
-                    >
-                      Follow
-                    </Text>
+                    {friends === "true" ? (
+                      <Text
+                        onPress={unfollow}
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 14,
+                          color: "white",
+                        }}
+                      >
+                        UnFollow
+                      </Text>
+                    ) : (
+                      <Text
+                        onPress={follow}
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 14,
+                          color: "white",
+                        }}
+                      >
+                        Follow
+                      </Text>
+                    )}
                   </TouchableOpacity>
                 )}
               </View>
@@ -341,12 +464,14 @@ const Profile = ({ myProfile, userId }) => {
             </View>
           </View>
         )}
-        data={selectedTab === "posts" ? posts : myLikes}
+        data={selectedTab === "posts" ? posts : likedPosts}
         renderItem={(post) => <Post post={post.item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{
           gap: 15,
         }}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
         showsVerticalScrollIndicator={false}
       />
     </View>
