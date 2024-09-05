@@ -197,6 +197,7 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Stack.Screen name="camera" options={{ headerShown: false }} />
     </Stack>
   );
 }

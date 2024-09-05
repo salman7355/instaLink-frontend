@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 // import { process.env.EXPO_PUBLIC_API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AuthContext = createContext();
 
@@ -10,17 +11,27 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState({
     auth: false,
-    // id: 3,
-    // username: "Salman",
-    // email: "salman@test.com",
-    // password: "test",
-    // profilepictureurl: "null",
-    // followers: 0,
-    // following: 0,
-    // dateofbirth: "2002-01-09T22:00:00.000Z",
-    // mobile: "01234567890",
   });
-  // console.log("user", user);
+  const [isloading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          console.log("No user data found in AsyncStorage");
+        }
+      } catch (error) {
+        console.log("Failed to load user data from AsyncStorage", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   const register = async (
     username,
@@ -57,6 +68,16 @@ export function AuthProvider({ children }) {
           auth: true,
           ...data,
         });
+
+        await AsyncStorage.setItem(
+          "user",
+          JSON.stringify({
+            auth: true,
+            ...data,
+          })
+        );
+
+        console.log("User data saved in AsyncStorage");
       }
     } catch (error) {
       console.log(error);
@@ -84,21 +105,33 @@ export function AuthProvider({ children }) {
           auth: true,
           ...data,
         });
+        await AsyncStorage.setItem(
+          "user",
+          JSON.stringify({
+            auth: true,
+            ...data,
+          })
+        );
+
+        console.log("User data saved in AsyncStorage");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const signout = () => {
+  const signout = async () => {
+    await AsyncStorage.removeItem("user");
+    // Update the application state to reflect that the user is signed out
     setUser({
       auth: false,
     });
+    console.log("User signed out and removed from AsyncStorage");
   };
 
   return (
     <AuthContext.Provider value={{ user, signout, signIn, register }}>
-      {children}
+      {!isloading && children}
     </AuthContext.Provider>
   );
 }

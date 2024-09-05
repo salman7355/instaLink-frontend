@@ -2,7 +2,9 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-const Story = () => {
+const Story = ({ story }) => {
+  // console.log(story);
+
   return (
     <View
       style={{
@@ -14,7 +16,7 @@ const Story = () => {
       }}
     >
       <Image
-        source={require("../assets/images/Rectangle 6.png")}
+        source={{ uri: story.image_url }}
         style={{
           borderRadius: 16,
           height: "100%",
@@ -49,7 +51,7 @@ const Story = () => {
           }}
         >
           <Image
-            source={require("../assets/images/Profile Photo.png")}
+            source={{ uri: story.profilepictureurl }}
             style={{
               borderRadius: 40,
               height: "100%",

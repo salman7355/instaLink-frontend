@@ -12,8 +12,9 @@ const Post = ({ post }) => {
   } = useAuth();
   const router = useRouter();
 
-  const [like, setLike] = useState();
+  const [like, setLike] = useState(post.isLiked);
   const [newLikeCount, setNewLikeCount] = useState(post.likes);
+  // console.log(like);
 
   const addLike = async () => {
     setLike(!like);
@@ -164,7 +165,7 @@ const Post = ({ post }) => {
               gap: 10,
             }}
           >
-            {like === true ? (
+            {like ? (
               <AntDesign name="like1" size={24} color="#f62e8e" />
             ) : (
               <AntDesign name="like2" size={24} color="white" />

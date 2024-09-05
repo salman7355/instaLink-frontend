@@ -25,6 +25,7 @@ const index = () => {
   const { user } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const [stories, setStories] = useState([]);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -96,17 +97,32 @@ const index = () => {
       }
     );
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
   };
 
   const fetchPosts = async () => {
-    const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/all`);
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/posts/all/${user.id}`
+    );
     const data = await res.json();
     // console.log("fetchinggggg");
 
     // console.log(data);
     if (data) {
       setPosts(data);
+    }
+  };
+
+  const fetchStories = async () => {
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/stories/${user.id}`
+    );
+    const data = await res.json();
+    // console.log(data);
+    if (data) {
+      setStories(data);
+    } else {
+      console.log("No stories found");
     }
   };
 
@@ -119,28 +135,8 @@ const index = () => {
       savetokenToServer(token);
     });
     fetchPosts();
+    fetchStories();
   }, [router]);
-
-  const stories = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
-    },
-  ];
 
   return (
     <SafeAreaView
@@ -224,7 +220,7 @@ const index = () => {
               </View>
 
               {/* Stories */}
-              {/* {stories.length > 0 && (
+              {stories.length > 0 && (
                 <View
                   style={{
                     marginTop: 30,
@@ -237,7 +233,7 @@ const index = () => {
                 >
                   <FlatList
                     data={stories}
-                    renderItem={(item) => <Story />}
+                    renderItem={(item) => <Story story={item.item} />}
                     keyExtractor={(item) => item.id}
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -246,7 +242,7 @@ const index = () => {
                     }}
                   />
                 </View>
-              )} */}
+              )}
 
               {/* border */}
               <View

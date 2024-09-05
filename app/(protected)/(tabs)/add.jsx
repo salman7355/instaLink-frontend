@@ -8,7 +8,7 @@ import {
   Button,
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -17,7 +17,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { storage } from "../../../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../../context/Auth";
-// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
 
 const add = () => {
   const [caption, setCaption] = useState("");
@@ -54,7 +53,6 @@ const add = () => {
       ),
     });
   }, [caption, imageUrl]);
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -67,7 +65,6 @@ const add = () => {
       await uploadImage(result.assets[0].uri);
     }
   };
-
   const uploadImage = async (uri) => {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -92,7 +89,6 @@ const add = () => {
       }
     );
   };
-
   const addPost = async () => {
     const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/posts/add`, {
       method: "POST",
@@ -199,7 +195,19 @@ const add = () => {
               color="white"
               onPress={pickImage}
             />
-            <Feather name="camera" size={20} color="white" />
+            <Feather
+              name="camera"
+              size={20}
+              color="white"
+              onPress={() => {
+                router.push({
+                  pathname: "/(protected)/camera",
+                  params: {
+                    type: "post",
+                  },
+                });
+              }}
+            />
           </View>
         )}
       </View>
@@ -295,6 +303,12 @@ const add = () => {
           <Text
             onPress={() => {
               setSelectedTab("story");
+              router.push({
+                pathname: "/(protected)/camera",
+                params: {
+                  type: "story",
+                },
+              });
             }}
             style={{
               color: "white",

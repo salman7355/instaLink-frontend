@@ -3,11 +3,43 @@ import { AuthProvider, useAuth } from "../context/Auth";
 import { useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StackLayout = () => {
   const { user } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+
+  // const logAsyncStorage = async () => {
+  //   try {
+  //     const keys = await AsyncStorage.getAllKeys();
+  //     if (keys.length === 0) {
+  //       console.log("AsyncStorage is empty.");
+  //       return;
+  //     }
+
+  //     const stores = await AsyncStorage.multiGet(keys);
+  //     stores.forEach(([key, value]) => {
+  //       console.log(`Key: ${key}, Value: ${value}`);
+  //     });
+  //   } catch (error) {
+  //     console.error("Error logging AsyncStorage", error);
+  //   }
+  // };
+
+  // logAsyncStorage();
+
+  // const clearAll = async () => {
+  //   try {
+  //     await AsyncStorage.clear();
+  //   } catch (e) {
+  //     // clear error
+  //   }
+
+  //   console.log("Done.");
+  // };
+
+  // clearAll();
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(protected)";
