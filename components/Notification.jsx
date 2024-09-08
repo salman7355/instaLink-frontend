@@ -1,10 +1,45 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const Notification = ({ item }) => {
-  const { id, isRead, type } = item;
+  const router = useRouter();
+
+  const handleRoute = () => {
+    if (item.type === "like" || item.type === "comment") {
+      router.push(`/(protected)/post/${item.post_id}`);
+    } else {
+      router.push(`/(protected)/profile/${item.user_id}`);
+    }
+  };
+
+  const timeAgo = (date) => {
+    const now = new Date();
+    const createdTime = new Date(date);
+    const diff = Math.floor((now - createdTime) / 1000);
+
+    const timeIntervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60,
+      second: 1,
+    };
+
+    for (const [unit, secondsInUnit] of Object.entries(timeIntervals)) {
+      const interval = Math.floor(diff / secondsInUnit);
+      if (interval >= 1) {
+        return interval + unit[0] + " ago"; // e.g., '2h ago', '15m ago', etc.
+      }
+    }
+
+    return "just now";
+  };
+
   return (
     <View
       style={{
@@ -13,7 +48,8 @@ const Notification = ({ item }) => {
         width: "100%",
       }}
     >
-      <View
+      <Pressable
+        onPress={handleRoute}
         style={{
           paddingHorizontal: 24,
           flexDirection: "row",
@@ -32,9 +68,9 @@ const Notification = ({ item }) => {
             alignItems: "center",
           }}
         >
-          {type == "like" ? (
+          {item.type == "like" ? (
             <AntDesign name="like2" size={16} color="#2E8AF6" />
-          ) : type == "comment" ? (
+          ) : item.type == "comment" ? (
             <AntDesign name="message1" size={16} color="#F62E8E" />
           ) : (
             <AntDesign name="adduser" size={16} color="#ac1af0" />
@@ -47,13 +83,13 @@ const Notification = ({ item }) => {
         >
           <Text
             style={{
-              fontWeight: isRead ? "200" : "bold",
+              fontWeight: item.is_read ? "200" : "bold",
               fontSize: 14,
 
               color: "#ECEBED",
             }}
           >
-            Marwan liked your post
+            {item.message}
           </Text>
           <Text
             style={{
@@ -61,10 +97,10 @@ const Notification = ({ item }) => {
               color: "#727477",
             }}
           >
-            10m ago
+            {timeAgo(item.created_at)}
           </Text>
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 };

@@ -1,43 +1,47 @@
 import { View, Text, Image, FlatList } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { idText } from "typescript";
 import Notification from "../../../components/Notification";
+import { useAuth } from "../../../context/Auth";
 
 const notification = () => {
-  const [alerts, setAlerts] = useState([
-    {
-      id: 1,
-      isRead: false,
-      type: "like",
-    },
-    {
-      id: 2,
-      isRead: false,
-      type: "like",
-    },
-    {
-      id: 3,
-      isRead: false,
-      type: "comment",
-    },
-    {
-      id: 4,
-      isRead: true,
-      type: "comment",
-    },
-    {
-      id: 5,
-      isRead: true,
-      type: "FR",
-    },
-  ]);
+  const { user } = useAuth();
+  const [alerts, setAlerts] = useState([]);
+  const [allread, setAllRead] = useState(false);
 
-  const markAllAsRead = () => {
-    alerts.map((alert) => {
-      alert.isRead = true;
-    });
-    setAlerts([...alerts]);
+  const markAllAsRead = async () => {
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/notification/mark-all-read`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+        }),
+      }
+    );
+    const data = await res.json();
+    if (data) {
+      setAllRead(true);
+    }
   };
+
+  const getAllNotifications = async () => {
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/notification/${user.id}`
+    );
+    const data = await res.json();
+    console.log(data);
+    if (data) {
+      setAlerts(data);
+    }
+  };
+
+  useEffect(() => {
+    getAllNotifications();
+  }, [allread]);
 
   return (
     <View
@@ -89,6 +93,24 @@ const notification = () => {
           contentContainerStyle={{
             gap: 10,
           }}
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                }}
+              >
+                You have no notifications
+              </Text>
+            </View>
+          )}
         />
       </View>
     </View>
