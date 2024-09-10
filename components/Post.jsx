@@ -5,6 +5,7 @@ import Story from "../components/Story";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useAuth } from "../context/Auth";
+import { timeAgo } from "../utils/getTimeAgo";
 
 const Post = ({ post }) => {
   const {
@@ -104,7 +105,7 @@ const Post = ({ post }) => {
                   color: "#727477",
                 }}
               >
-                {post.timestamp}
+                {timeAgo(post.timestamp)}
               </Text>
             </View>
           </View>

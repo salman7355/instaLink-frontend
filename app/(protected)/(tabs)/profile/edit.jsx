@@ -33,7 +33,9 @@ const edit = () => {
       if (!nameValue && !emailValue && !mobileValue && !passwordValue) {
         console.log("Empty values");
         Alert.alert("Empty values", "Please fill your desired values");
+        return;
       }
+      // console.log("not empty");
 
       const data = {
         username: nameValue,
@@ -55,11 +57,11 @@ const edit = () => {
 
       const result = await res.json();
 
-      if (result.success) {
+      if (result.error) {
+        Alert.alert("Error", "Failed to update account");
+      } else {
         Alert.alert("Success", "Account updated successfully");
         router.push("/(protected)/(tabs)/profile");
-      } else {
-        Alert.alert("Error", "Failed to update account");
       }
     } catch (error) {
       console.log(`Error in update: ${error}`);
