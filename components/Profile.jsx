@@ -4,23 +4,18 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  TouchableWithoutFeedback,
   Pressable,
 } from "react-native";
-import Entypo from "@expo/vector-icons/Entypo";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import Post from "./Post";
-import { SafeAreaView } from "react-native-safe-area-context";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuth } from "../context/Auth";
-
-// import { process.env.EXPO_PUBLIC_API_URL } from "@env";
+import { useNavigation, useRouter } from "expo-router";
 
 const Profile = ({ myProfile, userId }) => {
-  // console.log(myProfile);
+  const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState("posts");
-  const [showLogout, setShowLogout] = useState(false);
-  const { signout } = useAuth();
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState();
   const [likedPosts, setLikedPosts] = useState([]);
@@ -28,6 +23,7 @@ const Profile = ({ myProfile, userId }) => {
   const {
     user: { id },
   } = useAuth();
+  const router = useRouter();
 
   const addToSearchHistory = async () => {
     try {
@@ -154,15 +150,6 @@ const Profile = ({ myProfile, userId }) => {
     setRefreshing(false);
   };
 
-  // const myLikes = [
-  //   {
-  //     id: 1,
-  //   },
-  //   {
-  //     id: 2,
-  //   },
-  // ];
-
   return (
     <View>
       <FlatList
@@ -183,39 +170,14 @@ const Profile = ({ myProfile, userId }) => {
                 top: 6,
               }}
             >
-              <Entypo
-                name="dots-three-vertical"
+              <Ionicons
+                name="reorder-three"
                 size={24}
                 color="#727477"
                 onPress={() => {
-                  setShowLogout(!showLogout);
+                  navigation.openDrawer();
                 }}
               />
-              {showLogout && (
-                <TouchableOpacity
-                  onPress={signout}
-                  style={{
-                    width: 100,
-                    height: 40,
-                    position: "absolute",
-                    right: 5,
-                    top: 30,
-                    backgroundColor: "#383d42",
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "red",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Logout
-                  </Text>
-                </TouchableOpacity>
-              )}
             </View>
             <LinearGradient
               colors={["rgb(246, 46, 143)", "rgb(172, 26, 239)"]}
@@ -343,6 +305,9 @@ const Profile = ({ myProfile, userId }) => {
               >
                 {myProfile ? (
                   <TouchableOpacity
+                    onPress={() => {
+                      router.push("/(protected)/(tabs)/profile/edit");
+                    }}
                     style={{
                       justifyContent: "center",
                       alignItems: "center",

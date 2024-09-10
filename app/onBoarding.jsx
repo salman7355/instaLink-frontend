@@ -12,6 +12,23 @@ const onBoarding = () => {
   const router = useRouter();
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
+  const logAsyncStorage = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      if (keys.length === 0) {
+        console.log("AsyncStorage is empty.");
+        return;
+      }
+
+      const stores = await AsyncStorage.multiGet(keys);
+      stores.forEach(([key, value]) => {
+        console.log(`Key: ${key}, Value: ${value}`);
+      });
+    } catch (error) {
+      console.error("Error logging AsyncStorage", error);
+    }
+  };
+
   const handleContinue = async () => {
     const allpermissions = await requestAllPermission();
     if (allpermissions) {
@@ -30,11 +47,11 @@ const onBoarding = () => {
     }
 
     // Push Notification Permission
-    const notificationStatus = await registerForPushNotificationsAsync();
-    if (!notificationStatus) {
-      Alert.alert("Push Notification Permission Required");
-      return false;
-    }
+    // const notificationStatus = await registerForPushNotificationsAsync();
+    // if (!notificationStatus) {
+    //   Alert.alert("Push Notification Permission Required");
+    //   return false;
+    // }
 
     await AsyncStorage.setItem("hasOpened", "true");
     return true; // All permissions granted
@@ -96,6 +113,7 @@ const onBoarding = () => {
         flex: 1,
         backgroundColor: "#181a1c",
         gap: 20,
+        paddingHorizontal: 20,
       }}
     >
       <View
@@ -124,7 +142,7 @@ const onBoarding = () => {
         <View
           style={{
             paddingHorizontal: 24,
-            width: "75%",
+            width: "85%",
             gap: 25,
           }}
         >
@@ -147,9 +165,10 @@ const onBoarding = () => {
             width: "90%",
             height: 50,
             marginBottom: 20,
+            marginHorizontal: 24,
           }}
         >
-          <CustomButton text="Continue" action={handleContinue} />
+          <CustomButton text="Get Started" action={handleContinue} />
         </View>
       </View>
     </View>

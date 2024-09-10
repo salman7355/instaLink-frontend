@@ -15,7 +15,7 @@ const CustomButton = ({ text, action }) => {
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 14,
-        marginHorizontal: 24,
+        // marginHorizontal: 24,
       }}
     >
       <Text

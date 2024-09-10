@@ -108,6 +108,9 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-circle-outline" size={30} color={color} />
           ),
+          tabBarStyle: {
+            display: "none",
+          },
         }}
       />
     </Tabs>

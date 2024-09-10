@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Profile from "../../../components/Profile";
-import { useAuth } from "../../../context/Auth";
+import Profile from "../../../../components/Profile";
+import { useAuth } from "../../../../context/Auth";
 
 const profile = () => {
   const {

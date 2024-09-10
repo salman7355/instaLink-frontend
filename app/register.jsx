@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleSheet,
   Pressable,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
@@ -65,7 +66,7 @@ const register = () => {
   };
 
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         backgroundColor: "#181a1c",
@@ -80,23 +81,29 @@ const register = () => {
           marginBottom: 10,
         }}
       >
-        <Text
+        <View
           style={{
-            fontSize: 30,
-            fontWeight: "bold",
-            color: "white",
+            alignItems: "center",
           }}
         >
-          𝕴𝖓𝖘𝖙𝖆𝕷𝖎𝖓𝖐
-        </Text>
-        <Text
-          style={{
-            color: "#727477",
-            fontSize: 12,
-          }}
-        >
-          Create An Account and Sign Up
-        </Text>
+          <Text
+            style={{
+              fontSize: 30,
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
+            𝕴𝖓𝖘𝖙𝖆𝕷𝖎𝖓𝖐
+          </Text>
+          <Text
+            style={{
+              color: "#727477",
+              fontSize: 12,
+            }}
+          >
+            Create An Account and Sign Up
+          </Text>
+        </View>
         <Pressable
           onPress={pickImage}
           style={{
@@ -224,13 +231,14 @@ const register = () => {
       <View
         style={{
           gap: 10,
-          marginTop: 10,
+          marginTop: 30,
         }}
       >
         <View
           style={{
             width: "90%",
             height: 40,
+            marginHorizontal: 24,
           }}
         >
           <CustomButton
@@ -266,7 +274,7 @@ const register = () => {
           </Text>
         </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

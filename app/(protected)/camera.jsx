@@ -14,14 +14,14 @@ const camera = () => {
   const [cameraMode, setCameraMode] = useState("photo");
   const [picture, setPicture] = useState("");
 
-  const getCameraPermission = async () => {
-    const cameraStatus = await requestCameraPermission();
-    if (!cameraStatus.granted) {
-      Alert.alert("Camera permission is required to access this feature");
-      //   console.log(cameraStatus);
-    }
-    // console.log(cameraStatus);
-  };
+  // const getCameraPermission = async () => {
+  //   const cameraStatus = await requestCameraPermission();
+  //   if (!cameraStatus.granted) {
+  //     Alert.alert("Camera permission is required to access this feature");
+  //     //   console.log(cameraStatus);
+  //   }
+  //   // console.log(cameraStatus);
+  // };
 
   async function takePicture() {
     const response = await cameraRef.current?.takePictureAsync({});
@@ -29,9 +29,9 @@ const camera = () => {
     // console.log(response.uri);
   }
 
-  useEffect(() => {
-    getCameraPermission();
-  }, []);
+  // useEffect(() => {
+  //   // getCameraPermission();
+  // }, []);
 
   if (picture) return <Picture picture={picture} type={type} />;
   return (

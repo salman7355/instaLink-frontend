@@ -74,13 +74,19 @@ const StackLayout = () => {
   return (
     <Stack>
       <Stack.Screen
-        name="login"
+        name="register"
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name="register"
+        name="onBoarding"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="login"
         options={{
           headerShown: false,
         }}

@@ -97,6 +97,7 @@ export default function login() {
           style={{
             width: "90%",
             height: 40,
+            marginHorizontal: 24,
           }}
         >
           <CustomButton
