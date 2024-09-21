@@ -6,6 +6,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useAuth } from "../../../../context/Auth";
 import CustomButton from "../../../../components/CustomButton";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const edit = () => {
   const { user } = useAuth();
@@ -61,6 +62,13 @@ const edit = () => {
         Alert.alert("Error", "Failed to update account");
       } else {
         Alert.alert("Success", "Account updated successfully");
+        await AsyncStorage.setItem(
+          "user",
+          JSON.stringify({
+            auth: true,
+            ...result,
+          })
+        );
         router.push("/(protected)/(tabs)/profile");
       }
     } catch (error) {

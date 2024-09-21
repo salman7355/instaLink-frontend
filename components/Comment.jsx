@@ -1,5 +1,6 @@
 import { View, Text, Image, FlatList, Pressable } from "react-native";
 import React from "react";
+import { timeAgo } from "../utils/getTimeAgo";
 
 const Comment = ({ comment }) => {
   return (
@@ -56,7 +57,7 @@ const Comment = ({ comment }) => {
             fontSize: 13,
           }}
         >
-          {comment.timestamp}
+          {timeAgo(comment.timestamp)}
         </Text>
       </View>
     </View>

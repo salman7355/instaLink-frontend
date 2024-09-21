@@ -1,5 +1,5 @@
-import { View, Text, Image, FlatList, Pressable } from "react-native";
-import React, { useState } from "react";
+import { View, Text, Image, FlatList, Pressable, Alert } from "react-native";
+import React, { useCallback, useState } from "react";
 import { useRouter } from "expo-router";
 import Story from "../components/Story";
 import { AntDesign } from "@expo/vector-icons";
@@ -15,7 +15,22 @@ const Post = ({ post }) => {
 
   const [like, setLike] = useState(post.isLiked);
   const [newLikeCount, setNewLikeCount] = useState(post.likes);
+  const [lastTap, setLastTap] = useState(null);
   // console.log(like);
+
+  const handleDoubleTap = useCallback(() => {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300; // Time in ms to register a double tap
+
+    if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
+      // Double tap detected, call the like function
+      // Alert.alert("Double Tap", "Double tap detected");
+      addLike();
+    } else {
+      // Single tap, just set the last tap timestamp
+      setLastTap(now);
+    }
+  }, [lastTap]);
 
   const addLike = async () => {
     setLike(!like);
@@ -73,7 +88,7 @@ const Post = ({ post }) => {
               alignItems: "center",
             }}
           >
-            <View
+            <Pressable
               style={{
                 width: 32,
                 height: 32,
@@ -88,7 +103,7 @@ const Post = ({ post }) => {
                   height: "100%",
                 }}
               />
-            </View>
+            </Pressable>
             <View style={{}}>
               <Text
                 style={{
@@ -113,14 +128,7 @@ const Post = ({ post }) => {
         </View>
 
         <Pressable
-          onPress={() => {
-            router.push({
-              pathname: `/post/${post.id}`,
-              params: {
-                post: JSON.stringify(post),
-              },
-            });
-          }}
+          onPress={handleDoubleTap}
           style={{
             gap: 10,
           }}
