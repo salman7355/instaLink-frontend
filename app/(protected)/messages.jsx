@@ -1,40 +1,40 @@
 import { View, Text, TextInput, Image, FlatList } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Friend from "../../components/Friend";
 import Message from "../../components/Message";
+import { useAuth } from "../../context/Auth";
 
 const messages = () => {
-  const friends = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-  ];
+  const { user } = useAuth();
+  const [friends, setFriends] = useState([]);
+  const getFriends = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/friends/all/${user.id}`
+      );
+      const data = await response.json();
+      if (!data) {
+        console.error("No friends found");
+      }
+      setFriends(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getFriends();
+  }, []);
 
   const messages = [
     {
       id: 1,
+      username: "Marwan",
     },
     {
       id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
+      username: "Ramy",
     },
   ];
 

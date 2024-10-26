@@ -11,6 +11,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 const Message = ({ message }) => {
+  console.log(message);
+
   const { id } = message;
   const router = useRouter();
   return (
@@ -70,7 +72,7 @@ const Message = ({ message }) => {
               fontWeight: "bold",
             }}
           >
-            Jessica Thompson
+            {message.username}
           </Text>
           <Text
             style={{
