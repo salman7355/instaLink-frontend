@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/Auth";
 import { useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import CustomButton from "../components/CustomButton";
 
 export default function login() {

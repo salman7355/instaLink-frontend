@@ -14,7 +14,10 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../context/Auth";
 import * as ImagePicker from "expo-image-picker";
 import { storage } from "../firebaseConfig";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { formatDate } from "../utils/DatePickerFormat";
 
 const register = () => {
   const [Username, setUsername] = useState("");
@@ -26,6 +29,17 @@ const register = () => {
   const [image, setImage] = useState(null);
   const [imageurl, setImageUrl] = useState(null);
   const { register } = useAuth();
+  const [date, setDate] = useState(null);
+  const [showPicker, setShowPicker] = useState(false);
+
+  const handleDatePicker = (event, selectedDate) => {
+    if (event.type === "set") {
+      const currentDate = selectedDate || date;
+      setDate(currentDate);
+      setDateOfBirth(formatDate(currentDate));
+    }
+    setShowPicker(false);
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -155,16 +169,39 @@ const register = () => {
           >
             Date of Birth
           </Text>
-          <TextInput
+          <View
             style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
               backgroundColor: "#c2c3c5",
-              paddingVertical: 10,
               paddingHorizontal: 10,
               borderRadius: 10,
             }}
-            placeholder="DD/MM/YYYY"
-            onChangeText={setDateOfBirth}
-          />
+          >
+            {/* <TextInput
+              style={{
+                paddingVertical: 10,
+              }}
+              placeholder="DD/MM/YYYY"
+              onChangeText={setDateOfBirth}
+            /> */}
+            <Text
+              style={{
+                paddingVertical: 15,
+              }}
+            >
+              {DateOfBirth || "DD/MM/YYYY"}
+            </Text>
+            <AntDesign
+              name="calendar"
+              size={24}
+              color="black"
+              onPress={() => {
+                setShowPicker(true);
+              }}
+            />
+          </View>
         </View>
 
         <View style={{ gap: 5 }}>
@@ -241,6 +278,14 @@ const register = () => {
             marginHorizontal: 24,
           }}
         >
+          {showPicker && (
+            <DateTimePicker
+              mode="date"
+              value={date || new Date()}
+              onChange={handleDatePicker}
+              positiveButton={{ label: "Pick" }}
+            />
+          )}
           <CustomButton
             text={"Create an Account"}
             action={() => {
